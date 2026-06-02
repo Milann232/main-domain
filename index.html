@@ -113,42 +113,57 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
+            align-items: start; /* PENTING: Agar kartu tidak stretch */
         }
 
         .note-card {
             background: var(--card-bg);
             border-radius: 8px;
             padding: 15px;
-            min-height: 250px;
+            min-height: 220px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
             transition: transform 0.2s;
             border: 1px solid var(--border);
+            position: relative; /* PENTING untuk positioning tombol */
         }
 
         .note-card:hover { transform: translateY(-3px); border-color: var(--accent); }
 
-        .note-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; color: var(--accent); }
-        .note-content { white-space: pre-wrap; color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 10px; flex: 1; overflow: hidden; }
+        .note-header {
+            margin-bottom: 10px;
+        }
+
+        .note-title { font-size: 1.1rem; font-weight: bold; color: var(--accent); }
+        .note-date { font-size: 0.75rem; color: #666; margin-bottom: 5px; }
+        
+        .note-content { 
+            white-space: pre-wrap; 
+            color: var(--text-secondary); 
+            font-size: 0.9rem; 
+            margin-bottom: 10px;
+            overflow-y: auto; /* Scroll jika konten terlalu banyak */
+            flex-grow: 1;
+            max-height: 150px;
+        }
         
         .note-image {
             width: 100%;
-            max-height: 150px;
+            max-height: 120px;
             object-fit: cover;
             border-radius: 5px;
             margin-bottom: 10px;
             border: 1px solid var(--border);
         }
 
-        .note-date { font-size: 0.75rem; color: #666; margin-bottom: 5px; }
-        
+        /* ---PERBAIKAN TOMBOL HAPUS--- */
         .note-actions {
-            margin-top: 10px;
+            margin-top: auto; /* PENTING: Selalu di bawah */
+            padding-top: 10px;
             display: flex;
             justify-content: flex-end;
-            gap: 5px;
+            border-top: 1px solid var(--border);
         }
 
         .empty-state {
@@ -284,7 +299,7 @@
     <script>
         // ---KONFIGURASI---
         const STORAGE_KEY = 'dark_slide_notes_v2';
-        const PIN_CODE = '6666'; // PIN BARU
+        const PIN_CODE = '6666';
 
         let notes = [];
         let currentImageBase64 = null;
@@ -359,12 +374,12 @@
                 let imageHtml = note.image ? `<img src="${note.image}" class="note-image" alt="Gambar">` : '';
                 
                 card.innerHTML = `
-                    <div>
+                    <div class="note-header">
                         <div class="note-date">${note.date || ''}</div>
                         <div class="note-title">${note.title}</div>
-                        ${imageHtml}
-                        <div class="note-content">${note.content}</div>
                     </div>
+                    ${imageHtml}
+                    <div class="note-content">${note.content}</div>
                     <div class="note-actions">
                         <button class="btn-danger btn-small" onclick="deleteNote(${note.id})">Hapus</button>
                     </div>
